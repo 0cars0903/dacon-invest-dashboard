@@ -1,0 +1,23 @@
+@import "tailwindcss";
+
+:root {
+  --color-background: #ffffff;
+  --color-foreground: #0a0a0a;
+  --color-primary: #6366F1;
+  --color-up: #10B981;
+  --color-down: #EF4444;
+  --color-neutral: #6B7280;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-background: #0a0a0a;
+    --color-foreground: #ededed;
+  }
+}
+
+body {
+  background: var(--color-background);
+  color: var(--color-foreground);
+  font-family: 'Pretendard Variable', system-ui, -apple-system, sans-serif;
+}
