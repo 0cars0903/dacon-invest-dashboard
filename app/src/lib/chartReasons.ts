@@ -48,11 +48,19 @@ export function generateChartReasons(
 
   if (dataType === "STOCK_TS") {
     const maCount = calculation.indicators.filter((i) => i.id.startsWith("ma_")).length;
-    reasons.push({
-      chartName: "가격 추이 + 이동평균선",
-      reason: `날짜·종가 컬럼이 감지되어, 가격 흐름과 ${maCount}개 이동평균선을 함께 표시합니다.`,
-      basis: "시각화매핑규칙 §2.1 STOCK_TS → LINE(가격+MA)",
-    });
+    if (hasOhlc) {
+      reasons.push({
+        chartName: "캔들스틱 차트 (OHLC)",
+        reason: "시가·고가·저가·종가 4개 컬럼이 감지되어, 캔들스틱 차트로 시장 심리를 시각화합니다.",
+        basis: "시각화매핑규칙 §2.1 STOCK_TS → CANDLESTICK(OHLC 존재 시 1a 대체)",
+      });
+    } else {
+      reasons.push({
+        chartName: "가격 추이 + 이동평균선",
+        reason: `날짜·종가 컬럼이 감지되어, 가격 흐름과 ${maCount}개 이동평균선을 함께 표시합니다.`,
+        basis: "시각화매핑규칙 §2.1 STOCK_TS → LINE(가격+MA)",
+      });
+    }
     reasons.push({
       chartName: "누적 수익률",
       reason: "시작점 대비 누적 수익률 추이를 시각화하여, 투자 성과를 한눈에 보여줍니다.",
@@ -98,6 +106,16 @@ export function generateChartReasons(
       basis: "시각화매핑규칙 §2.2 ETF_COMP → AREA(정규화비교)",
     });
     reasons.push({
+      chartName: "상관계수 히트맵",
+      reason: "종목 간 일간 수익률의 피어슨 상관계수를 행렬로 시각화하여 분산 효과를 평가합니다.",
+      basis: "시각화매핑규칙 §2.2 ETF_COMP → HEATMAP(상관계수)",
+    });
+    reasons.push({
+      chartName: "위험-수익 버블",
+      reason: "X축 변동성, Y축 수익률, 크기=데이터 포인트 수로 종목 간 리스크-리턴을 비교합니다.",
+      basis: "시각화매핑규칙 §2.2 ETF_COMP → BUBBLE(위험-수익)",
+    });
+    reasons.push({
       chartName: "요약 테이블",
       reason: "종목별 수익률·변동성·샤프비율을 비교 테이블로 정리합니다.",
       basis: "시각화매핑규칙 §2.2 ETF_COMP → TABLE(종목별비교)",
@@ -131,6 +149,11 @@ export function generateChartReasons(
       chartName: "요약 테이블",
       reason: "HHI 집중도·최대 비중 자산 등 핵심 배분 지표를 요약합니다.",
       basis: "시각화매핑규칙 §2.3 PORT_ALLOC → TABLE(요약)",
+    });
+    reasons.push({
+      chartName: "비중-수익률 버블",
+      reason: "자산별 비중(X축)과 수익률(Y축)의 관계를 버블 크기로 시각화합니다.",
+      basis: "시각화매핑규칙 §2.3 PORT_ALLOC → BUBBLE(비중-수익률)",
     });
     reasons.push({
       chartName: "데이터 테이블",

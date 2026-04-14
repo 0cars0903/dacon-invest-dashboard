@@ -128,9 +128,10 @@
   - [FIXED] Base-100 정규화 미노출 → calculate.ts ETF_COMP 분기에 구현
   - [FIXED] 한국 티커코드 제로패딩 미처리 → detect.ts에 6자리 패딩 추가
   - [FIXED] Rating 시멘틱 정규화 미구현 → normalizeRating() + RATING_MAP 추가
-  - [KNOWN-GAP] CANDLESTICK 차트: 시각화매핑규칙에 정의되나 Recharts 네이티브 미지원으로 Phase 3 커스텀 SVG 구현 예정
-  - [KNOWN-GAP] ETF_COMP 상관계수 히트맵/버블차트: Phase 3 구현 예정
-  - [KNOWN-GAP] Bollinger Bands 선택 지표: Phase 3 구현 예정
+  - [FIXED] CANDLESTICK 차트: CandlestickChart.tsx 구현 완료 (ComposedChart + Bar 커스텀, OHLC 감지 시 PriceLineChart 대체)
+  - [FIXED] ETF_COMP 상관계수 히트맵: CorrelationHeatmap.tsx 구현 완료 (피어슨 상관계수 + 커스텀 셀 그리드)
+  - [FIXED] ETF_COMP/PORT_ALLOC 버블차트: RiskReturnBubble.tsx 구현 완료 (ScatterChart + ZAxis)
+  - [KNOWN-GAP] Bollinger Bands 선택 지표: Phase 3 후반 구현 예정
 
 [2026-04-13] [H9] 대회 환경 재현성 보장 — Skills.md만으로 동일한 대시보드가 생성 가능해야 함.
   - 파이프라인 각 단계의 입출력 인터페이스가 Skills.md TypeScript 블록과 정확히 일치할 것

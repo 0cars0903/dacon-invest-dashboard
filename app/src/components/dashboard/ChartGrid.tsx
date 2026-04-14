@@ -15,11 +15,14 @@
 import { useState, useMemo } from "react";
 import type { DetectionResult, CalculationResult } from "@/types";
 import { PriceLineChart } from "../charts/PriceLineChart";
+import { CandlestickChart } from "../charts/CandlestickChart";
 import { CumulativeReturnChart } from "../charts/CumulativeReturnChart";
 import { VolumeBarChart } from "../charts/VolumeBarChart";
 import { ReturnDistributionChart } from "../charts/ReturnDistributionChart";
 import { RSIChart } from "../charts/RSIChart";
 import { PortfolioPieChart } from "../charts/PortfolioPieChart";
+import { CorrelationHeatmap } from "../charts/CorrelationHeatmap";
+import { RiskReturnBubble } from "../charts/RiskReturnBubble";
 import { SummaryTable } from "../charts/SummaryTable";
 import { DataTable } from "../charts/DataTable";
 import { generateChartReasons } from "@/lib/chartReasons";
@@ -111,21 +114,27 @@ export function ChartGrid({ detection, calculation, rawData }: Props) {
   // STOCK_TS: 가격 시계열 중심
   if (dataType === "STOCK_TS") {
     const hasVolume = detection.columns.some((c) => c.role === "volume");
+    const hasOhlc = detection.columns.some((c) => c.role === "ohlc");
     const hasRsi = calculation.indicators.some((i) => i.id === "rsi");
     const indicatorCount = calculation.indicators.length;
 
     return (
       <div className="space-y-4">
         <ChartReasonsBanner detection={detection} calculation={calculation} />
-        {/* FULL: 가격 + MA */}
-        <PriceLineChart calculation={calculation} />
+
+        {/* FULL: OHLC 존재 시 캔들스틱, 아니면 가격+MA */}
+        {hasOhlc ? (
+          <CandlestickChart detection={detection} rawData={rawData} />
+        ) : (
+          <PriceLineChart calculation={calculation} />
+        )}
 
         {/* FULL: 누적 수익률 */}
         <CumulativeReturnChart calculation={calculation} />
 
-        {/* HALF × 2: 거래량 + 수익률 분포 */}
+        {/* HALF × 2: 거래량 + 수익률 분포 (캔들스틱에 거래량 포함 시 생략) */}
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          {hasVolume && (
+          {hasVolume && !hasOhlc && (
             <VolumeBarChart detection={detection} rawData={rawData} />
           )}
           <ReturnDistributionChart calculation={calculation} />
@@ -149,6 +158,17 @@ export function ChartGrid({ detection, calculation, rawData }: Props) {
       <div className="space-y-4">
         <ChartReasonsBanner detection={detection} calculation={calculation} />
         <CumulativeReturnChart calculation={calculation} />
+
+        {/* HALF × 2: 상관계수 히트맵 + 위험-수익 버블 */}
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <CorrelationHeatmap detection={detection} rawData={rawData} />
+          <RiskReturnBubble
+            detection={detection}
+            calculation={calculation}
+            rawData={rawData}
+          />
+        </div>
+
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <SummaryTable calculation={calculation} detection={detection} />
           <ReturnDistributionChart calculation={calculation} />
@@ -167,6 +187,14 @@ export function ChartGrid({ detection, calculation, rawData }: Props) {
           <PortfolioPieChart detection={detection} rawData={rawData} />
           <SummaryTable calculation={calculation} detection={detection} />
         </div>
+
+        {/* 비중-수익률 버블차트 */}
+        <RiskReturnBubble
+          detection={detection}
+          calculation={calculation}
+          rawData={rawData}
+        />
+
         <DataTable rawData={rawData} />
       </div>
     );
