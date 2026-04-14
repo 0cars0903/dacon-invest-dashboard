@@ -77,9 +77,9 @@ function ETFMultiLineChart({ calculation }: Props) {
               borderRadius: 8,
               fontSize: 12,
             }}
-            formatter={(val: number, name: string) => [
-              `${val.toFixed(2)}`,
-              name,
+            formatter={(val, name) => [
+              typeof val === "number" ? val.toFixed(2) : String(val),
+              String(name),
             ]}
           />
           <ReferenceLine
