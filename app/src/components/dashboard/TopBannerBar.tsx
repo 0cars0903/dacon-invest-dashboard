@@ -9,7 +9,7 @@ interface Props {
 export function TopBannerBar({ banner }: Props) {
   return (
     <div
-      className="rounded-xl px-5 py-3 text-sm font-medium"
+      className="rounded-xl px-4 py-3 text-sm font-medium sm:px-5"
       style={{
         backgroundColor: banner.backgroundColor,
         color: banner.textColor,

@@ -108,8 +108,8 @@ export function CorrelationHeatmap({ detection, rawData }: Props) {
   const cellSize = Math.min(64, Math.floor(400 / tickers.length));
 
   return (
-    <div className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
-      <h3 className="mb-3 text-sm font-semibold text-gray-700">
+    <div className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-slate-800">
+      <h3 className="mb-3 text-sm font-semibold text-gray-700 dark:text-gray-200">
         상관계수 히트맵
       </h3>
 

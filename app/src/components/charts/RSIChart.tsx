@@ -48,8 +48,8 @@ export function RSIChart({ calculation }: Props) {
   }
 
   return (
-    <div className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
-      <h3 className="mb-3 text-sm font-semibold text-gray-700">RSI (14)</h3>
+    <div className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-slate-800">
+      <h3 className="mb-3 text-sm font-semibold text-gray-700 dark:text-gray-200">RSI (14)</h3>
       <ResponsiveContainer width="100%" height={200}>
         <LineChart data={rsiData}>
           <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />

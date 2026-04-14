@@ -1,23 +1,59 @@
 @import "tailwindcss";
 
 :root {
-  --color-background: #ffffff;
-  --color-foreground: #0a0a0a;
-  --color-primary: #6366F1;
-  --color-up: #10B981;
-  --color-down: #EF4444;
-  --color-neutral: #6B7280;
+  --color-background: #f9fafb;
+  --color-foreground: #111827;
+  --color-primary: #6366f1;
+  --color-up: #10b981;
+  --color-down: #ef4444;
+  --color-neutral: #6b7280;
+  --color-card: #ffffff;
+  --color-border: #e5e7eb;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --color-background: #0a0a0a;
-    --color-foreground: #ededed;
+    --color-background: #0f172a;
+    --color-foreground: #f1f5f9;
+    --color-card: #1e293b;
+    --color-border: #334155;
   }
 }
 
 body {
   background: var(--color-background);
   color: var(--color-foreground);
-  font-family: 'Pretendard Variable', system-ui, -apple-system, sans-serif;
+  font-family: "Pretendard Variable", system-ui, -apple-system, sans-serif;
+}
+
+/* Recharts 다크모드 보정 */
+@media (prefers-color-scheme: dark) {
+  .recharts-cartesian-grid line {
+    stroke: #334155;
+  }
+  .recharts-text {
+    fill: #94a3b8;
+  }
+  .recharts-default-tooltip {
+    background-color: #1e293b !important;
+    border-color: #475569 !important;
+  }
+}
+
+/* 스크롤바 스타일링 */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+@media (prefers-color-scheme: dark) {
+  ::-webkit-scrollbar-thumb {
+    background: #475569;
+  }
 }

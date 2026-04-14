@@ -48,16 +48,16 @@ function ChartReasonsBanner({
   );
 
   return (
-    <div className="rounded-xl border border-indigo-100 bg-indigo-50/50 px-4 py-3">
+    <div className="rounded-xl border border-indigo-100 bg-indigo-50/50 px-4 py-3 dark:border-indigo-900 dark:bg-indigo-950/30">
       <button
         onClick={() => setIsExpanded(!isExpanded)}
         className="flex w-full items-center justify-between text-left"
       >
         <div className="flex items-center gap-2">
-          <span className="flex h-6 w-6 items-center justify-center rounded-full bg-indigo-100 text-xs">
+          <span className="flex h-6 w-6 items-center justify-center rounded-full bg-indigo-100 text-xs dark:bg-indigo-900">
             🔍
           </span>
-          <span className="text-sm font-medium text-indigo-900">
+          <span className="text-sm font-medium text-indigo-900 dark:text-indigo-200">
             {summary.dataTypeLabel} 감지 → {summary.totalCharts}개 차트 자동 배정
           </span>
         </div>
@@ -75,20 +75,28 @@ function ChartReasonsBanner({
       </button>
 
       {/* 한 줄 요약 — 항상 표시 */}
-      <p className="mt-1 text-xs text-indigo-700">{summary.overallReason}</p>
+      <p className="mt-1 text-xs text-indigo-700 dark:text-indigo-300">
+        {summary.overallReason}
+      </p>
 
       {/* 펼침 시 개별 이유 */}
       {isExpanded && (
-        <div className="mt-3 space-y-2 border-t border-indigo-100 pt-3">
+        <div className="mt-3 space-y-2 border-t border-indigo-100 pt-3 dark:border-indigo-800">
           {summary.reasons.map((r, i) => (
             <div key={i} className="flex gap-2 text-xs">
-              <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded bg-indigo-100 text-[10px] font-bold text-indigo-600">
+              <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded bg-indigo-100 text-[10px] font-bold text-indigo-600 dark:bg-indigo-900 dark:text-indigo-300">
                 {i + 1}
               </span>
               <div>
-                <span className="font-medium text-gray-800">{r.chartName}</span>
-                <span className="text-gray-500"> — {r.reason}</span>
-                <p className="mt-0.5 text-[10px] text-indigo-400">{r.basis}</p>
+                <span className="font-medium text-gray-800 dark:text-gray-200">
+                  {r.chartName}
+                </span>
+                <span className="text-gray-500 dark:text-gray-400">
+                  {" "}— {r.reason}
+                </span>
+                <p className="mt-0.5 text-[10px] text-indigo-400 dark:text-indigo-500">
+                  {r.basis}
+                </p>
               </div>
             </div>
           ))}

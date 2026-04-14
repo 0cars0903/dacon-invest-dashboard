@@ -26,34 +26,34 @@ export function SummaryTable({ calculation, detection }: Props) {
     .slice(0, 10);
 
   return (
-    <div className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
-      <h3 className="mb-3 text-sm font-semibold text-gray-700">요약 통계</h3>
+    <div className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-slate-800">
+      <h3 className="mb-3 text-sm font-semibold text-gray-700 dark:text-gray-200">요약 통계</h3>
       <div className="overflow-x-auto">
         <table className="w-full text-left text-sm">
           <thead>
-            <tr className="border-b border-gray-100">
-              <th className="pb-2 pr-4 text-xs font-medium text-gray-500">
+            <tr className="border-b border-gray-100 dark:border-gray-600">
+              <th className="pb-2 pr-4 text-xs font-medium text-gray-500 dark:text-gray-400">
                 지표
               </th>
-              <th className="pb-2 pr-4 text-right text-xs font-medium text-gray-500">
+              <th className="pb-2 pr-4 text-right text-xs font-medium text-gray-500 dark:text-gray-400">
                 값
               </th>
-              <th className="pb-2 text-xs font-medium text-gray-500">구분</th>
+              <th className="pb-2 text-xs font-medium text-gray-500 dark:text-gray-400">구분</th>
             </tr>
           </thead>
           <tbody>
             {displayIndicators.map((ind) => (
-              <tr key={ind.id} className="border-b border-gray-50">
-                <td className="py-2 pr-4 text-gray-700">{ind.name}</td>
-                <td className="py-2 pr-4 text-right font-mono text-gray-900">
+              <tr key={ind.id} className="border-b border-gray-50 dark:border-gray-700">
+                <td className="py-2 pr-4 text-gray-700 dark:text-gray-300">{ind.name}</td>
+                <td className="py-2 pr-4 text-right font-mono text-gray-900 dark:text-white">
                   {formatValue(ind.value as number, ind.unit)}
                 </td>
                 <td className="py-2">
                   <span
                     className={`rounded-full px-2 py-0.5 text-xs ${
                       ind.category === "required"
-                        ? "bg-indigo-50 text-indigo-600"
-                        : "bg-gray-50 text-gray-500"
+                        ? "bg-indigo-50 text-indigo-600 dark:bg-indigo-900/50 dark:text-indigo-300"
+                        : "bg-gray-50 text-gray-500 dark:bg-gray-700 dark:text-gray-400"
                     }`}
                   >
                     {ind.category === "required" ? "필수" : "선택"}

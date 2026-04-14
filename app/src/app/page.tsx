@@ -52,13 +52,18 @@ export default function HomePage() {
   );
 
   return (
-    <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+    <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
       {/* 헤더 */}
-      <header className="mb-8 text-center">
-        <h1 className="text-3xl font-bold tracking-tight text-gray-900">
-          InvestLens
-        </h1>
-        <p className="mt-2 text-sm text-gray-500">
+      <header className="mb-6 text-center sm:mb-8">
+        <div className="inline-flex items-center gap-2">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-600 text-white text-sm font-bold">
+            IL
+          </div>
+          <h1 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-3xl">
+            InvestLens
+          </h1>
+        </div>
+        <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
           어떤 투자 데이터든 업로드하면, 자동으로 분석하고 대시보드를 만듭니다.
         </p>
       </header>
@@ -80,23 +85,23 @@ export default function HomePage() {
         <div className="space-y-4">
           {/* 탭 헤더 + 리셋 */}
           <div className="flex items-center justify-between">
-            <div className="flex gap-1 rounded-lg bg-gray-100 p-1">
+            <div className="flex gap-1 rounded-lg bg-gray-100 p-1 dark:bg-slate-800">
               <button
                 onClick={() => setActiveTab("dashboard")}
-                className={`rounded-md px-4 py-1.5 text-sm font-medium transition-colors ${
+                className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors sm:px-4 ${
                   activeTab === "dashboard"
-                    ? "bg-white text-gray-900 shadow-sm"
-                    : "text-gray-500 hover:text-gray-700"
+                    ? "bg-white text-gray-900 shadow-sm dark:bg-slate-700 dark:text-white"
+                    : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
                 }`}
               >
                 대시보드
               </button>
               <button
                 onClick={() => setActiveTab("table")}
-                className={`rounded-md px-4 py-1.5 text-sm font-medium transition-colors ${
+                className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors sm:px-4 ${
                   activeTab === "table"
-                    ? "bg-white text-gray-900 shadow-sm"
-                    : "text-gray-500 hover:text-gray-700"
+                    ? "bg-white text-gray-900 shadow-sm dark:bg-slate-700 dark:text-white"
+                    : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
                 }`}
               >
                 데이터 편집
@@ -107,7 +112,7 @@ export default function HomePage() {
                 setResult(null);
                 setActiveTab("dashboard");
               }}
-              className="rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-medium text-gray-600 transition-colors hover:bg-gray-100"
+              className="rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-medium text-gray-600 transition-colors hover:bg-gray-100 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-slate-700"
             >
               새 파일 분석
             </button>
@@ -125,6 +130,13 @@ export default function HomePage() {
           )}
         </div>
       )}
+
+      {/* 푸터 */}
+      <footer className="mt-12 border-t border-gray-100 pt-6 text-center dark:border-gray-700">
+        <p className="text-xs text-gray-400 dark:text-gray-500">
+          InvestLens · Skills.md 기반 투자 데이터 자동 분석 대시보드 · DACON 해커톤 2026
+        </p>
+      </footer>
     </main>
   );
 }

@@ -87,8 +87,8 @@ export function CandlestickChart({ detection, rawData }: Props) {
   const hasVolume = data.some((d) => d.volume !== undefined && d.volume > 0);
 
   return (
-    <div className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
-      <h3 className="mb-3 text-sm font-semibold text-gray-700">
+    <div className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-slate-800">
+      <h3 className="mb-3 text-sm font-semibold text-gray-700 dark:text-gray-200">
         캔들스틱 차트 (OHLC)
       </h3>
 

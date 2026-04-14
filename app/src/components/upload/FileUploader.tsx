@@ -87,7 +87,7 @@ export function FileUploader({
         onDragOver={(e) => e.preventDefault()}
         onDrop={handleDrop}
         onClick={() => inputRef.current?.click()}
-        className="cursor-pointer rounded-2xl border-2 border-dashed border-gray-300 bg-white p-12 text-center transition-colors hover:border-indigo-400 hover:bg-indigo-50/30"
+        className="cursor-pointer rounded-2xl border-2 border-dashed border-gray-300 bg-white p-8 text-center transition-all hover:border-indigo-400 hover:bg-indigo-50/30 hover:shadow-lg dark:border-gray-600 dark:bg-slate-800 dark:hover:border-indigo-500 dark:hover:bg-slate-750 sm:p-12"
       >
         <input
           ref={inputRef}
@@ -103,15 +103,15 @@ export function FileUploader({
         {isAnalyzing ? (
           <div className="space-y-3">
             <div className="mx-auto h-10 w-10 animate-spin rounded-full border-4 border-indigo-200 border-t-indigo-600" />
-            <p className="text-sm font-medium text-indigo-600">
+            <p className="text-sm font-medium text-indigo-600 dark:text-indigo-400">
               데이터를 분석하고 있습니다...
             </p>
           </div>
         ) : (
           <div className="space-y-3">
-            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-indigo-100">
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-indigo-100 dark:bg-indigo-900">
               <svg
-                className="h-7 w-7 text-indigo-600"
+                className="h-7 w-7 text-indigo-600 dark:text-indigo-400"
                 fill="none"
                 viewBox="0 0 24 24"
                 strokeWidth={1.5}
@@ -125,10 +125,10 @@ export function FileUploader({
               </svg>
             </div>
             <div>
-              <p className="text-base font-medium text-gray-700">
+              <p className="text-base font-medium text-gray-700 dark:text-gray-200">
                 투자 데이터 파일을 드래그하거나 클릭하여 업로드
               </p>
-              <p className="mt-1 text-xs text-gray-400">
+              <p className="mt-1 text-xs text-gray-400 dark:text-gray-500">
                 CSV, JSON · 최대 {UPLOAD_LIMITS.maxFileSizeMB}MB
               </p>
             </div>
@@ -139,10 +139,10 @@ export function FileUploader({
       {/* 샘플 데이터 원클릭 로드 */}
       {!isAnalyzing && (
         <div>
-          <p className="mb-3 text-center text-xs font-medium text-gray-400">
+          <p className="mb-3 text-center text-xs font-medium text-gray-400 dark:text-gray-500">
             또는 샘플 데이터로 바로 체험하기
           </p>
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
             {SAMPLE_DATA_OPTIONS.map((opt) => (
               <button
                 key={opt.id}
@@ -150,13 +150,13 @@ export function FileUploader({
                   e.stopPropagation();
                   handleSampleClick(opt.csv);
                 }}
-                className="group rounded-xl border border-gray-200 bg-white px-3 py-3 text-left transition-all hover:border-indigo-300 hover:shadow-md"
+                className="group rounded-xl border border-gray-200 bg-white px-3 py-3 text-left transition-all hover:border-indigo-300 hover:shadow-md dark:border-gray-600 dark:bg-slate-800 dark:hover:border-indigo-500"
               >
                 <div className="text-xl">{opt.icon}</div>
-                <p className="mt-1 text-sm font-medium text-gray-800 group-hover:text-indigo-700">
+                <p className="mt-1 text-sm font-medium text-gray-800 group-hover:text-indigo-700 dark:text-gray-200 dark:group-hover:text-indigo-400">
                   {opt.label}
                 </p>
-                <p className="mt-0.5 text-[11px] leading-tight text-gray-400">
+                <p className="mt-0.5 text-[11px] leading-tight text-gray-400 dark:text-gray-500">
                   {opt.description}
                 </p>
               </button>

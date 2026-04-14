@@ -17,10 +17,10 @@ export function DataTable({ rawData, maxRows = 50 }: Props) {
   const displayRows = rawData.slice(0, maxRows);
 
   return (
-    <div className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
-      <h3 className="mb-3 text-sm font-semibold text-gray-700">
+    <div className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-slate-800">
+      <h3 className="mb-3 text-sm font-semibold text-gray-700 dark:text-gray-200">
         데이터 테이블
-        <span className="ml-2 text-xs font-normal text-gray-400">
+        <span className="ml-2 text-xs font-normal text-gray-400 dark:text-gray-500">
           {rawData.length > maxRows
             ? `상위 ${maxRows}행 / 전체 ${rawData.length}행`
             : `${rawData.length}행`}
@@ -28,12 +28,12 @@ export function DataTable({ rawData, maxRows = 50 }: Props) {
       </h3>
       <div className="max-h-96 overflow-auto">
         <table className="w-full text-left text-xs">
-          <thead className="sticky top-0 bg-gray-50">
+          <thead className="sticky top-0 bg-gray-50 dark:bg-slate-700">
             <tr>
               {columns.map((col) => (
                 <th
                   key={col}
-                  className="whitespace-nowrap border-b border-gray-200 px-3 py-2 text-gray-600"
+                  className="whitespace-nowrap border-b border-gray-200 px-3 py-2 text-gray-600 dark:border-gray-600 dark:text-gray-300"
                 >
                   {col}
                 </th>
@@ -42,11 +42,11 @@ export function DataTable({ rawData, maxRows = 50 }: Props) {
           </thead>
           <tbody>
             {displayRows.map((row, rowIdx) => (
-              <tr key={rowIdx} className="border-b border-gray-50 hover:bg-gray-50/50">
+              <tr key={rowIdx} className="border-b border-gray-50 hover:bg-gray-50/50 dark:border-gray-700 dark:hover:bg-slate-700/50">
                 {columns.map((col) => (
                   <td
                     key={col}
-                    className="whitespace-nowrap px-3 py-1.5 font-mono text-gray-800"
+                    className="whitespace-nowrap px-3 py-1.5 font-mono text-gray-800 dark:text-gray-200"
                   >
                     {formatCell(row[col])}
                   </td>

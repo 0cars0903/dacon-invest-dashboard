@@ -15,21 +15,23 @@ interface AnalysisResult {
 
 interface DashboardViewProps {
   result: AnalysisResult;
-  onReset?: () => void; // 탭 구조에서는 page.tsx가 관리
+  onReset?: () => void;
 }
 
 export function DashboardView({ result }: DashboardViewProps) {
   const { detection, calculation, insights } = result;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5 sm:space-y-6">
       {/* 상단: 데이터 요약 */}
-      <div className="text-sm text-gray-500">
-        <span className="font-medium text-gray-900">
+      <div className="text-sm text-gray-500 dark:text-gray-400">
+        <span className="font-medium text-gray-900 dark:text-white">
           {detection.dataType}
         </span>
         {detection.subType && (
-          <span className="ml-1 text-gray-400">({detection.subType})</span>
+          <span className="ml-1 text-gray-400 dark:text-gray-500">
+            ({detection.subType})
+          </span>
         )}
         {" · "}
         {detection.rowCount.toLocaleString()}행 × {detection.columnCount}열

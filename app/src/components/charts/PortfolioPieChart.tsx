@@ -44,8 +44,8 @@ export function PortfolioPieChart({ detection, rawData }: Props) {
   const mainColors = [...COLORS.main, "#8B5CF6", "#EC4899", "#14B8A6", "#F97316"];
 
   return (
-    <div className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
-      <h3 className="mb-3 text-sm font-semibold text-gray-700">자산 배분</h3>
+    <div className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-slate-800">
+      <h3 className="mb-3 text-sm font-semibold text-gray-700 dark:text-gray-200">자산 배분</h3>
       <ResponsiveContainer width="100%" height={280}>
         <PieChart>
           <Pie

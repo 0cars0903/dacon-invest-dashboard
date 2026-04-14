@@ -121,8 +121,8 @@ export function RiskReturnBubble({ detection, calculation, rawData }: Props) {
   const yLabel = "수익률 (%)";
 
   return (
-    <div className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
-      <h3 className="mb-3 text-sm font-semibold text-gray-700">
+    <div className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-slate-800">
+      <h3 className="mb-3 text-sm font-semibold text-gray-700 dark:text-gray-200">
         {isETF ? "위험-수익 버블" : "자산별 비중-수익률"}
       </h3>
       <ResponsiveContainer width="100%" height={300}>
