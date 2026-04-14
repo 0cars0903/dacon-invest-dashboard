@@ -5,7 +5,8 @@
 | 항목 | 내용 |
 |------|------|
 | 마감일 | **2026-04-30** |
-| 남은 기간 | 18일 (2026-04-12 기준) |
+| 남은 기간 | 15일 (2026-04-15 기준) |
+| 현재 Phase | **Phase 3 진행 중** (고급 차트 완료, 2탭 구조 완료, 라이브 테스트 완료) |
 | 참여 도구 | Claude Cowork (바이브 코딩) |
 | 주중 가용 | 1시간/일 |
 | 주말 가용 | 5시간/일 (최대) |
@@ -41,55 +42,68 @@
 
 ## 단계별 계획
 
-### 📌 Phase 1 — 기획 + Skills.md 설계 (4/12~4/14 · 7h)
+### ✅ Phase 1 — 기획 + Skills.md 설계 (4/12~4/14 · 7h) **[완료]**
 **목표**: 서비스 컨셉 확정, Skills.md 초안 완성
 
-| 날짜 | 활동 | 시간 |
-|------|------|------|
-| 4/12 (일) | 대회 분석, 서비스 컨셉 결정, 데이터 소스 조사 | 3h |
-| 4/12 (일) | Skills.md 구조 초안 설계 (분석 규칙, 시각화 기준) | 2h |
-| 4/13 (월) | Skills.md 세부 작성 (투자 지표 계산 규칙) | 1h |
-| 4/14 (화) | Skills.md 세부 작성 (인사이트 생성 규칙) | 1h |
+| 날짜 | 활동 | 시간 | 상태 |
+|------|------|------|------|
+| 4/12 (일) | 대회 분석, 서비스 컨셉 결정, 데이터 소스 조사 | 3h | ✅ |
+| 4/12 (일) | Skills.md 구조 초안 설계 (분석 규칙, 시각화 기준) | 2h | ✅ |
+| 4/13 (월) | Skills.md 세부 작성 (투자 지표 계산 규칙) | 1h | ✅ |
+| 4/14 (화) | Skills.md 세부 작성 (인사이트 생성 규칙) | 1h | ✅ |
 
-**Claude Cowork 활용**:
-- Skills.md 구조 설계: `skill-creator` 스킬 참고
-- 투자 데이터 분석 규칙 리서치
+**성과**:
+- 서비스 컨셉 "InvestLens" 확정
+- Skills.md 4모듈 v2.1 완성 (데이터감지/지표계산/시각화매핑/인사이트생성)
+- 6개 페르소나 정의 (personas.md)
 
 ---
 
-### 🔧 Phase 2 — 프로토타입 개발 (4/15~4/19 · 14h)
+### ✅ Phase 2 — 프로토타입 개발 (4/12~4/13 · 선행 완료) **[완료]**
 **목표**: Next.js 프로젝트 세팅 + 핵심 컴포넌트 구현
 
-| 날짜 | 활동 | 시간 |
-|------|------|------|
-| 4/15 (수) | Next.js 프로젝트 초기 세팅 (project-setup 스킬) | 1h |
-| 4/16 (목) | 데이터 연동 (공개 API — Yahoo Finance, FRED 등) | 1h |
-| 4/17 (금) | 기본 차트 컴포넌트 구현 | 1h |
-| 4/18 (토) | 대시보드 레이아웃 + 시각화 컴포넌트 집중 개발 | 5h |
-| 4/19 (일) | Skills.md 기반 자동 분석 파이프라인 구현 | 5h |
+| 날짜 | 활동 | 시간 | 상태 |
+|------|------|------|------|
+| 4/12 (일) | Next.js 16 프로젝트 세팅 + 타입 정의 | 2h | ✅ |
+| 4/12 (일) | 파이프라인 4모듈 구현 (detect/calculate/insights) | 3h | ✅ |
+| 4/13 (월) | 대시보드 UI 8종 차트 + 레이아웃 구현 | 2h | ✅ |
+| 4/13 (월) | Skills.md ↔ 코드 감사 (CRITICAL 6건 수정) | 2h | ✅ |
+| 4/13 (월) | GitHub 레포 생성 + Vercel 배포 완료 | 1h | ✅ |
 
-**Claude Cowork 활용**:
-- `project-setup` 스킬로 Next.js 보일러플레이트
-- `api-scaffold` 스킬로 데이터 API 구현
+**성과**:
+- 파이프라인: detect.ts → calculate.ts → insights.ts → index.ts
+- 차트 8종: PriceLine, CumulativeReturn, Volume, ReturnDistribution, RSI, PortfolioPie, SummaryTable, DataTable
+- Skills.md ↔ 코드 감사: CRITICAL 6건 수정, Lint.md v1.1 (H8/H9/S7 추가)
+- TypeScript strict 0 errors
+- GitHub: https://github.com/0cars0903/dacon-invest-dashboard
+- Vercel: https://dacon-invest-dashboard.vercel.app
 
 ---
 
-### 🚀 Phase 3 — 기능 완성 + 배포 (4/20~4/26 · 15h)
-**목표**: 전체 기능 완성, Vercel 배포
+### 🚀 Phase 3 — 기능 완성 + 고도화 (4/14~4/26 · 15h)
+**목표**: 고급 차트 추가, UI 개선, 기획서 PDF 작성
 
-| 날짜 | 활동 | 시간 |
-|------|------|------|
-| 4/20 (월) | 인사이트 자동 생성 기능 구현 | 1h |
-| 4/21 (화) | UI 완성도 향상 | 1h |
-| 4/22 (수) | 범용성 개선 (다양한 데이터 구조 대응) | 1h |
-| 4/23 (목) | 버그 수정 + 코드 리팩토링 | 1h |
-| 4/24 (금) | Vercel 배포 + 접근 테스트 | 1h |
-| 4/25 (토) | 기획서 작성 (PDF) | 5h |
-| 4/26 (일) | Skills.md 최종 보완 + 제출물 패키징 | 5h |
+| 날짜 | 활동 | 시간 | 상태 |
+|------|------|------|------|
+| 4/14~15 | 고급 차트 구현 (CANDLESTICK, HEATMAP, BUBBLE) | 4h | ✅ |
+| 4/14~15 | 2탭 구조 + 샘플 데이터 + 차트 선택 이유 배너 | 4h | ✅ |
+| 4/15 | 와이드 포맷 ETF 감지 + normalizeValue 버그 수정 | 1h | ✅ |
+| 4/15 | 3개 샘플 데이터 라이브 테스트 (STOCK/ETF/PORT) | 1h | ✅ |
+| 4/16~19 | UI 완성도 향상 + 범용성 개선 + 버그 수정 | 3h | 🔲 |
+| 4/20~22 | 기획서 작성 (PDF) | 2h | 🔲 |
+| 4/23~26 | Skills.md 최종 보완 + 제출물 패키징 (.zip) | 2h | 🔲 |
+
+**KNOWN-GAP**:
+- ~~CANDLESTICK 차트~~ [FIXED 4/15]
+- ~~ETF_COMP 상관계수 히트맵 / 버블차트~~ [FIXED 4/15]
+- ~~와이드 포맷 ETF 감지 실패~~ [FIXED 4/15]
+- ~~normalizeValue trailing zero 변환 실패~~ [FIXED 4/15]
+- Bollinger Bands 선택 지표 (미구현)
+- 누적수익률 차트에 ETF 3종 라인이 1개만 표시 (범례 미표시, 확인 필요)
 
 **Claude Cowork 활용**:
 - `code-refactor` 스킬로 코드 품질 향상
-- Vercel MCP로 자동 배포
+- Vercel 자동 배포 (GitHub push → auto-deploy)
 
 ---
 
@@ -108,10 +122,11 @@
 ## 기술 스택 (제안)
 | 구분 | 기술 |
 |------|------|
-| Frontend | Next.js 14 (App Router) + Tailwind CSS |
-| 차트 | Recharts / Chart.js |
-| 데이터 | Yahoo Finance API / FRED API / 공개 더미 데이터 |
-| 배포 | Vercel |
+| Frontend | Next.js 16.2.3 (App Router) + Tailwind CSS v4 |
+| 차트 | Recharts 3.8.1 |
+| CSV 파싱 | Papaparse 5.5.3 |
+| 데이터 | CSV/JSON 업로드 → 자동 감지 (Yahoo Finance, FRED 포맷 지원) |
+| 배포 | Vercel (GitHub auto-deploy) |
 | 스킬 기반 | Skills.md → Claude Cowork 자동 생성 |
 
 ---
@@ -124,4 +139,35 @@
 
 ---
 
-_최종 업데이트: 2026-04-12_
+---
+
+## 배포 정보
+| 항목 | URL |
+|------|-----|
+| GitHub | https://github.com/0cars0903/dacon-invest-dashboard |
+| Vercel (Production) | https://dacon-invest-dashboard.vercel.app |
+| Vercel (Team) | junhees-projects-5f5f2302 |
+
+---
+
+## 다음 세션 재개 지점 (2026-04-15 기록)
+
+### 완료된 작업
+- Phase 3 고급 차트 3종 (캔들스틱, 상관계수 히트맵, 위험-수익 버블) 구현 + 배포
+- Phase 3 보강 3종 (차트 선택 이유 배너, 샘플 데이터 3종, 2탭 양방향 동기화) 구현 + 배포
+- 와이드 포맷 ETF 감지 + normalizeValue trailing zero 버그 수정 + 배포
+- 3개 샘플 데이터(STOCK_TS/ETF_COMP/PORT_ALLOC) 라이브 테스트 전체 통과
+
+### 다음 작업 (Phase 3 나머지)
+1. **UI 완성도 향상** — 누적수익률 차트 ETF 3종 라인 범례 표시 확인, 다크모드 미세 조정, 반응형
+2. **범용성 개선** — 사용자 직접 CSV 업로드 테스트 (Yahoo Finance 실데이터), Bollinger Bands
+3. **기획서 작성 (PDF)** — 서비스 개요, Skills.md 설계 방향, 분석 흐름, 스크린샷 포함
+4. **Skills.md 최종 보완** — 와이드 포맷 감지 규칙 반영, 제출용 .zip 패키징
+
+### 커밋 히스토리
+- c18e553: fix: normalizeValue trailing zero 처리
+- 4b89a42: fix: 와이드 포맷 ETF 데이터 감지 지원
+- 6fb9ef6: feat: 고급 차트 3종 구현 (캔들스틱, 상관계수 히트맵, 위험-수익 버블)
+- 96839f7: feat: 자동생성 체감도 강화 + 샘플 데이터 + 2탭 동기화 구현
+
+_최종 업데이트: 2026-04-15_
