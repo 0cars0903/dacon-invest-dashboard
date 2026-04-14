@@ -230,6 +230,8 @@ function determineType(columns: ColumnMeta[]): {
 
   // STOCK_TS / ETF_COMP
   if (has("date") && (count("ohlc") >= 2 || has("price") || has("adjusted_price"))) {
+    // 와이드 포맷: Date + 2개 이상 price 컬럼 = ETF_COMP
+    if (count("price") >= 2) return { dataType: "ETF_COMP", subType: null };
     if (has("ticker") && tickerUnique >= 2) return { dataType: "ETF_COMP", subType: null };
     return { dataType: "STOCK_TS", subType: null };
   }
@@ -319,6 +321,31 @@ export function detect(
     return { ...meta, role, normalizedValues };
   });
 
+  // 3.5: 와이드 포맷 ETF/비교 데이터 감지 (Date + 2개 이상 티커형 숫자 컬럼)
+  // 예: Date, SPY, QQQ, IWM 또는 Date, 삼성전자, SK하이닉스
+  const hasDateCol = columns.some((c) => c.role === "date");
+  const numericCols = columns.filter((c) => c.role === "numeric");
+  if (hasDateCol && numericCols.length >= 2) {
+    // 티커형 컬럼: 영문 대문자 1-6자, 또는 한글 포함 종목명, 또는 숫자가 아닌 이름
+    const tickerLikeCols = numericCols.filter((c) => {
+      const n = c.name.trim();
+      // 영문 티커: 대문자 1-6자 (SPY, QQQ, AAPL 등)
+      if (/^[A-Z]{1,6}$/.test(n)) return true;
+      // 한글 종목명: 한글 포함 2자 이상
+      if (/[가-힣]/.test(n) && n.length >= 2) return true;
+      // 영문+숫자 혼합 티커 (BRK.B 등)
+      if (/^[A-Z][A-Z0-9.]{0,5}$/.test(n)) return true;
+      return false;
+    });
+    if (tickerLikeCols.length >= 2) {
+      // 이 컬럼들을 "price" 역할로 승격하여 ETF_COMP 감지 활성화
+      for (const col of tickerLikeCols) {
+        const idx = columns.findIndex((c) => c.name === col.name);
+        if (idx !== -1) columns[idx] = { ...columns[idx], role: "price" };
+      }
+    }
+  }
+
   // 4: 유형 판정
   const { dataType, subType } = determineType(columns);
 
@@ -341,6 +368,7 @@ export function detect(
 
   // 티커 (한국 6자리 코드 제로패딩 §3-5)
   const tickerCol = columns.find((c) => c.role === "ticker");
+  const priceCols = columns.filter((c) => c.role === "price");
   const tickers = tickerCol
     ? [...new Set(rows.map((r) => {
         let val = String(r[tickerCol.name] ?? "").trim();
@@ -350,7 +378,10 @@ export function detect(
         }
         return val;
       }).filter(Boolean))]
-    : undefined;
+    : // 와이드 포맷: price 컬럼명 자체가 티커 (SPY, QQQ 등)
+      priceCols.length >= 2
+      ? priceCols.map((c) => c.name)
+      : undefined;
 
   // 통화
   const currencyCol = columns.find((c) => c.role === "currency");
