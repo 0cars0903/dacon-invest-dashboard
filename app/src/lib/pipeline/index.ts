@@ -9,6 +9,9 @@ import { generateInsights } from './insights';
 import { DEFAULT_INSIGHT_CONFIG } from '@/constants/defaults';
 import type { DetectionResult, CalculationResult, InsightResult } from '@/types';
 
+// 개별 모듈도 re-export — 2탭 동기화 시 부분 재실행용
+export { detect, calculate, generateInsights };
+
 interface PipelineResult {
   detection: DetectionResult;
   calculation: CalculationResult;
