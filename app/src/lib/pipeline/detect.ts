@@ -60,7 +60,8 @@ function normalizeValue(val: unknown): unknown {
   // 화폐 기호 + 콤마 제거
   const cleaned = s.replace(/[$₩€¥£]/g, "").replace(/(\d),(\d)/g, "$1$2");
   const num = parseFloat(cleaned);
-  if (!isNaN(num) && cleaned === String(num).substring(0, cleaned.length))
+  // 숫자 판별: 전체 문자열이 숫자 형식인지 검사 (trailing zero 허용)
+  if (!isNaN(num) && /^-?(\d+\.?\d*|\.\d+)$/.test(cleaned))
     return num;
 
   return s;
