@@ -247,10 +247,9 @@ function calcPremiumDiscount(
 ): EtfPremiumDiscount | null {
   const priceCol =
     detection.columns.find((c) => c.role === "ohlc" && /close|종가/i.test(c.name)) ??
-    detection.columns.find((c) => c.role === "price");
-  const navCol = detection.columns.find(
-    (c) => /^(nav|NAV|순자산가치|순자산)$/i.test(c.name)
-  );
+    detection.columns.find((c) => c.role === "price") ??
+    detection.columns.find((c) => c.role === "ohlc");
+  const navCol = detection.columns.find((c) => c.role === "nav");
   if (!priceCol || !navCol) return null;
 
   const history: { date: string; value: number }[] = [];
@@ -288,10 +287,9 @@ function calcTrackingError(
 ): EtfTrackingError | null {
   const priceCol =
     detection.columns.find((c) => c.role === "ohlc" && /close|종가/i.test(c.name)) ??
-    detection.columns.find((c) => c.role === "price");
-  const benchCol = detection.columns.find(
-    (c) => /^(benchmark|index|기준지수|벤치마크)$/i.test(c.name)
-  );
+    detection.columns.find((c) => c.role === "price") ??
+    detection.columns.find((c) => c.role === "ohlc");
+  const benchCol = detection.columns.find((c) => c.role === "benchmark");
   if (!priceCol || !benchCol) return null;
 
   const prices = rows.map((r) => Number(r[priceCol.name])).filter((v) => !isNaN(v));
@@ -320,9 +318,7 @@ function calcNavGauge(
   rows: Record<string, unknown>[],
   detection: DetectionResult
 ): EtfNavGauge | null {
-  const navCol = detection.columns.find(
-    (c) => /^(nav|NAV|순자산가치|순자산)$/i.test(c.name)
-  );
+  const navCol = detection.columns.find((c) => c.role === "nav");
   if (!navCol) return null;
 
   const navValues = rows.map((r) => Number(r[navCol.name])).filter((v) => !isNaN(v) && v > 0);

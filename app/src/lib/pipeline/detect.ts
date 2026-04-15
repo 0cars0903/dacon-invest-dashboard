@@ -108,9 +108,11 @@ const PATTERNS: { role: ColumnRole; regex: RegExp }[] = [
   { role: "date", regex: /^(date|trade_?date|trading_?date|timestamp|time|datetime|날짜|일자|거래일)$/i },
   { role: "ohlc", regex: /^(open|high|low|close|adj_?close|시가|고가|저가|종가)$/i },
   { role: "adjusted_price", regex: /^(adj_?close|adjusted_?close|adjusted_?price|수정종가|수정주가)$/i },
-  { role: "price", regex: /^(price|value|nav)$/i },
+  { role: "nav", regex: /^(nav|NAV|순자산가치|순자산)$/i },
+  { role: "benchmark", regex: /^(benchmark|index|기준지수|벤치마크)$/i },
+  { role: "price", regex: /^(price|value)$/i },
   { role: "volume", regex: /^(volume|vol|거래량|거래대금)$/i },
-  { role: "return", regex: /^(return|returns|수익률|daily_return|pct_change)$/i },
+  { role: "return", regex: /^(return|returns|수익률|daily_return|pct_change|annual_?return|annualized_?return|연수익률|연간수익률|총수익률|total_?return|ytd_?return|cumulative_?return)$/i },
   { role: "ticker", regex: /^(ticker|symbol|code|종목코드|종목명|name|asset)$/i },
   { role: "weight", regex: /^(weight|비중|allocation|proportion)$/i },
   { role: "category", regex: /^(category|sector|industry|분류|섹터|자산유형|asset_?class)$/i },
@@ -230,10 +232,12 @@ function determineType(columns: ColumnMeta[]): {
   const tickerUnique = tickerCol?.uniqueCount ?? 0;
 
   // STOCK_TS / ETF_COMP
-  if (has("date") && (count("ohlc") >= 2 || has("price") || has("adjusted_price"))) {
+  if (has("date") && (count("ohlc") >= 2 || has("price") || has("adjusted_price") || has("nav"))) {
     // 와이드 포맷: Date + 2개 이상 price 컬럼 = ETF_COMP
     if (count("price") >= 2) return { dataType: "ETF_COMP", subType: null };
     if (has("ticker") && tickerUnique >= 2) return { dataType: "ETF_COMP", subType: null };
+    // NAV 또는 Benchmark 컬럼 존재 → ETF 단일 종목이라도 ETF_COMP
+    if (has("nav") || has("benchmark")) return { dataType: "ETF_COMP", subType: null };
     return { dataType: "STOCK_TS", subType: null };
   }
 

@@ -23,6 +23,8 @@ export type ColumnRole =
   | 'currency'
   | 'rating'
   | 'adjusted_price'
+  | 'nav'
+  | 'benchmark'
   | 'numeric'
   | 'unknown';
 
