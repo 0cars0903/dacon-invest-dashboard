@@ -145,4 +145,50 @@
 
 ---
 
-_Version: 1.1 | Phase 2 검증 후 Hard Rule 보완 | 2026-04-13_
+---
+
+## UI 리뷰 게이트 체크리스트 (v1.2 신규)
+
+> AI가 UI 컴포넌트를 생성·수정한 후 반드시 이 체크리스트를 통과해야 다음 작업으로 진행한다.
+> Soft Rule이지만 체크 항목 3개 이상 미충족 시 Hard Rule 위반으로 간주한다.
+
+```
+□ [색상] DESIGN.md §2 색상 팔레트만 사용했는가? (임의 #hex 색상 없음)
+□ [스타일] Tailwind CSS 유틸리티 클래스만 사용했는가? (인라인 style={} 없음)
+□ [투자색상] 상승=빨강(red-500), 하락=파랑(blue-500) 한국 관례를 준수했는가?
+□ [KPI] KPI 카드가 4개 이내로 제한되어 있는가?
+□ [반응형] 모바일(1열)과 데스크톱(2~4열) 레이아웃이 모두 정상 동작하는가?
+□ [다크모드] 모든 색상에 dark: variant가 적용되어 있는가?
+□ [Skills 일치] 새 UI가 시각화매핑규칙.md Level 1~3 체계와 충돌하지 않는가?
+```
+
+**체크리스트 사용법:**
+- 새 컴포넌트 생성 시: 7개 항목 전체 확인
+- 기존 컴포넌트 수정 시: 수정 영역 관련 항목만 확인
+- Vercel 배포 전: 7개 항목 전체 재확인
+
+```
+[2026-04-16] [S8] DESIGN.md 컨텍스트 의무 제공 — AI에게 UI 작업을 요청할 때
+  DESIGN.md를 프롬프트에 함께 제공하거나 "DESIGN.md의 스타일 기준을 따를 것"을 명시할 것.
+  누락 시 AI가 임의 스타일을 생성하여 디자인 일관성이 깨질 수 있음.
+
+[2026-04-16] [S9] 리뷰 게이트 통과 확인 — UI 수정 후 반드시 리뷰 게이트 7항목 체크 후
+  이상 없으면 Vercel 배포(GitHub push) 진행. 체크리스트 미통과 항목은 즉시 수정.
+
+[2026-04-16] [S10] Sprint C UI 개선 — 5개 파일 수정 완료:
+  - [FIXED] COLORS.up/down 한국 관례 역전 → up=#EF4444(빨강), down=#3B82F6(파랑) (visualization.ts)
+  - [FIXED] KpiCardGrid inline style={} → Tailwind 클래스 (KpiCardGrid.tsx)
+  - [FIXED] TopBannerBar inline style={} → Tailwind 클래스 (TopBannerBar.tsx)
+  - [FIXED] KPI 라벨 전문용어 → 일상어 병기 "MDD (최대 낙폭)", "변동성 (가격 흔들림)" 등 (insights.ts)
+  - [NEW] InsightPanel Lucide 아이콘 (AlertCircle/AlertTriangle/Info/CheckCircle2)
+  - [NEW] InsightPanel expert/simple 토글 버튼
+  - [NEW] InsightPanel "나머지 N개 더 보기" 접기 버튼
+  - [NEW] lucide-react ^1.8.0 패키지 추가 (package.json)
+  - DESIGN.md §2, §4 기준 전면 적용
+  - [NOTE] visualization.ts의 hex 값(#EF4444 등)은 Recharts 전용 상수 — 차트 라이브러리는
+    Tailwind 클래스를 지원하지 않으므로 hex 필수. 컴포넌트에서는 COLORS.tw 객체의 Tailwind 클래스를 사용할 것.
+```
+
+---
+
+_Version: 1.2 | UI 리뷰 게이트 체크리스트 + DESIGN.md 연동 규칙 추가 | 2026-04-16_

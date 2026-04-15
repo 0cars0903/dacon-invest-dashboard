@@ -89,7 +89,7 @@
 | 4/14~15 | 2탭 구조 + 샘플 데이터 + 차트 선택 이유 배너 | 4h | ✅ |
 | 4/15 | 와이드 포맷 ETF 감지 + normalizeValue 버그 수정 | 1h | ✅ |
 | 4/15 | 3개 샘플 데이터 라이브 테스트 (STOCK/ETF/PORT) | 1h | ✅ |
-| 4/16~19 | UI 완성도 향상 + 범용성 개선 + 버그 수정 | 3h | 🔲 |
+| 4/16~19 | UI 완성도 향상 + 범용성 개선 + 버그 수정 | 3h | ✅ |
 | 4/20~22 | 기획서 작성 (PDF) | 2h | 🔲 |
 | 4/23~26 | Skills.md 최종 보완 + 제출물 패키징 (.zip) | 2h | 🔲 |
 
@@ -99,7 +99,10 @@
 - ~~와이드 포맷 ETF 감지 실패~~ [FIXED 4/15]
 - ~~normalizeValue trailing zero 변환 실패~~ [FIXED 4/15]
 - Bollinger Bands 선택 지표 (미구현)
-- 누적수익률 차트에 ETF 3종 라인이 1개만 표시 (범례 미표시, 확인 필요)
+- ~~누적수익률 차트에 ETF 3종 라인이 1개만 표시~~ [FIXED 4/15 — ETFMultiLineChart 컴포넌트 분리, Base-100 멀티라인 + 범례]
+- ~~다크모드 미구현~~ [FIXED 4/15 — 전체 21개 컴포넌트 dark: variant 적용]
+- ~~반응형 레이아웃 미흡~~ [FIXED 4/15 — sm: breakpoint 반응형 적용]
+- Bollinger Bands 선택 지표 (미구현)
 
 **Claude Cowork 활용**:
 - `code-refactor` 스킬로 코드 품질 향상
@@ -150,21 +153,21 @@
 
 ---
 
-## 다음 세션 재개 지점 (2026-04-15 기록)
+## 다음 세션 재개 지점 (2026-04-15 업데이트)
 
-### 완료된 작업
-- Phase 3 고급 차트 3종 (캔들스틱, 상관계수 히트맵, 위험-수익 버블) 구현 + 배포
-- Phase 3 보강 3종 (차트 선택 이유 배너, 샘플 데이터 3종, 2탭 양방향 동기화) 구현 + 배포
-- 와이드 포맷 ETF 감지 + normalizeValue trailing zero 버그 수정 + 배포
-- 3개 샘플 데이터(STOCK_TS/ETF_COMP/PORT_ALLOC) 라이브 테스트 전체 통과
+### 완료된 작업 (4/15 세션)
+- ETF 누적수익률 멀티라인 차트 수정 (ETFMultiLineChart, Base-100, 범례)
+- 전체 21개 컴포넌트 다크모드 적용 (dark: variant)
+- 반응형 레이아웃 개선 (sm: breakpoint)
+- UI 디테일 (헤더 로고, 푸터, 탭 스타일, 호버 효과)
+- Vercel 배포 완료 (commit c2b5772)
 
 ### 다음 작업 (Phase 3 나머지)
-1. **UI 완성도 향상** — 누적수익률 차트 ETF 3종 라인 범례 표시 확인, 다크모드 미세 조정, 반응형
-2. **범용성 개선** — 사용자 직접 CSV 업로드 테스트 (Yahoo Finance 실데이터), Bollinger Bands
-3. **기획서 작성 (PDF)** — 서비스 개요, Skills.md 설계 방향, 분석 흐름, 스크린샷 포함
-4. **Skills.md 최종 보완** — 와이드 포맷 감지 규칙 반영, 제출용 .zip 패키징
+1. **기획서 작성 (PDF)** — 서비스 개요, Skills.md 설계 방향, 분석 흐름, 스크린샷 포함 (4/20~22)
+2. **Skills.md 최종 보완** — 와이드 포맷 감지 규칙 반영, 제출용 .zip 패키징 (4/23~26)
 
 ### 커밋 히스토리
+- c2b5772: fix: CumulativeReturnChart Tooltip formatter 타입 에러 수정
 - c18e553: fix: normalizeValue trailing zero 처리
 - 4b89a42: fix: 와이드 포맷 ETF 데이터 감지 지원
 - 6fb9ef6: feat: 고급 차트 3종 구현 (캔들스틱, 상관계수 히트맵, 위험-수익 버블)

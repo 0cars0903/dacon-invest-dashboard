@@ -47,6 +47,32 @@ export interface Indicator {
   };
 }
 
+/** ETF 전용 지표 (지표계산규칙 v2.2 §7) */
+export interface EtfPremiumDiscount {
+  current: number;
+  history: { date: string; value: number }[];
+  level: 'normal' | 'info' | 'warning' | 'alert';
+  label: string;
+}
+
+export interface EtfTrackingError {
+  annualized: number;
+  level: 'positive' | 'info' | 'warning' | 'alert';
+}
+
+export interface EtfNavGauge {
+  value: number;
+  min: number;
+  max: number;
+  clamped: boolean;
+}
+
+export interface EtfMetrics {
+  premiumDiscount: EtfPremiumDiscount | null;
+  trackingError: EtfTrackingError | null;
+  navGauge: EtfNavGauge | null;
+}
+
 export interface CalculationSummary {
   totalReturn: number;
   annualizedReturn: number;
@@ -63,5 +89,6 @@ export interface CalculationResult {
   crossoverEvents?: CrossoverEvent[];
   normalizedPrices?: NormalizedPrice[];
   multiFactorScores?: MultiFactorScore[];
+  etfMetrics?: EtfMetrics;
   summary: CalculationSummary;
 }

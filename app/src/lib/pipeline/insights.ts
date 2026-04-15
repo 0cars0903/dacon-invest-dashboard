@@ -22,6 +22,62 @@ function nextId(): string {
   return `insight_${++insightCounter}`;
 }
 
+/**
+ * 경고 색상 조건부 렌더링 (시각화매핑규칙 v2.2 §9)
+ * 지표 값 → InsightLevel 매핑 유틸리티
+ */
+export function getIndicatorLevel(
+  indicatorId: string,
+  value: number
+): InsightLevel {
+  switch (indicatorId) {
+    case "mdd": {
+      // MDD는 음수 (예: -30%)
+      if (value < -30) return "alert";
+      if (value < -15) return "warning";
+      if (value > -5) return "positive";
+      return "info";
+    }
+    case "volatility": {
+      // 연환산 변동성 (%)
+      if (value > 40) return "alert";
+      if (value > 25) return "warning";
+      if (value < 10) return "positive";
+      return "info";
+    }
+    case "rsi": {
+      if (value > 70 || value < 30) return "warning";
+      if (value >= 40 && value <= 60) return "positive";
+      return "info";
+    }
+    case "sharpe_ratio": {
+      if (value < 0) return "warning";
+      if (value > 1) return "positive";
+      return "info";
+    }
+    case "premium_discount": {
+      const abs = Math.abs(value);
+      if (abs > 2) return "alert";
+      if (abs > 1) return "warning";
+      if (abs <= 0.5) return "positive";
+      return "info";
+    }
+    case "tracking_error": {
+      if (value > 2) return "alert";
+      if (value > 1) return "warning";
+      if (value <= 0.5) return "positive";
+      return "info";
+    }
+    case "hhi": {
+      if (value > 0.5) return "warning";
+      if (value < 0.15) return "positive";
+      return "info";
+    }
+    default:
+      return "info";
+  }
+}
+
 function makeInsight(
   partial: Omit<Insight, "id">
 ): Insight {
@@ -305,6 +361,83 @@ function etfCompInsights(
     }));
   }
 
+  // 5. 괴리율 인사이트 (§7 ETF 전용)
+  if (calc.etfMetrics?.premiumDiscount) {
+    const pd = calc.etfMetrics.premiumDiscount;
+    const abs = Math.abs(pd.current);
+    if (pd.level === "alert") {
+      insights.push(makeInsight({
+        level: "alert", priority: 1, insightDepth: "prescriptive",
+        title: `괴리율 ${pd.current > 0 ? "+" : ""}${pd.current.toFixed(2)}%, ${pd.label}`,
+        titleSimple: pd.current > 0 ? "시장가가 실제 가치보다 많이 비싸요!" : "시장가가 실제 가치보다 많이 싸요!",
+        description: `NAV 대비 괴리율이 ${pd.current.toFixed(2)}%로 ±2%를 초과합니다. 비정상 거래 가능성을 점검하세요.`,
+        descriptionSimple: pd.current > 0
+          ? `ETF 시장가가 실제 자산 가치보다 ${abs.toFixed(1)}%나 비싸요. 매수 시 주의가 필요해요.`
+          : `ETF 시장가가 실제 자산 가치보다 ${abs.toFixed(1)}%나 싸요. 유동성을 확인해 보세요.`,
+        relatedIndicator: "premium_discount", value: pd.current,
+        valueContext: "NAV 대비", icon: "⚠️",
+      }));
+    } else if (pd.level === "warning") {
+      insights.push(makeInsight({
+        level: "warning", priority: 3, insightDepth: "diagnostic",
+        title: `괴리율 ${pd.current > 0 ? "+" : ""}${pd.current.toFixed(2)}%, ${pd.label}`,
+        titleSimple: pd.current > 0 ? "시장가가 실제 가치보다 좀 비싼 편이에요" : "시장가가 실제 가치보다 좀 싼 편이에요",
+        description: `NAV 대비 괴리율이 ${pd.current.toFixed(2)}%로 주의 구간(±1~2%)에 있습니다.`,
+        descriptionSimple: pd.current > 0
+          ? `시장가가 실제 가치보다 약 ${abs.toFixed(1)}% 비싸요. 지켜볼 필요가 있어요.`
+          : `시장가가 실제 가치보다 약 ${abs.toFixed(1)}% 싸요.`,
+        relatedIndicator: "premium_discount", value: pd.current,
+        valueContext: "NAV 대비", icon: "🔔",
+      }));
+    } else if (pd.level === "normal") {
+      insights.push(makeInsight({
+        level: "positive", priority: 6, insightDepth: "descriptive",
+        title: `괴리율 ${pd.current.toFixed(2)}%, 정상 범위`,
+        titleSimple: "시장가와 실제 가치가 거의 같아요",
+        description: `NAV 대비 괴리율이 ${pd.current.toFixed(2)}%로 정상 범위(±0.5%) 내에 있습니다.`,
+        descriptionSimple: `ETF 시장가가 실제 자산 가치와 거의 일치해요. 정상적이에요!`,
+        relatedIndicator: "premium_discount", value: pd.current,
+        valueContext: "NAV 대비", icon: "✅",
+      }));
+    }
+  }
+
+  // 6. 추적오차 인사이트 (§7 ETF 전용)
+  if (calc.etfMetrics?.trackingError) {
+    const te = calc.etfMetrics.trackingError;
+    if (te.level === "alert") {
+      insights.push(makeInsight({
+        level: "alert", priority: 2, insightDepth: "prescriptive",
+        title: `추적오차 ${te.annualized.toFixed(2)}%, 벤치마크 괴리 심각`,
+        titleSimple: "벤치마크와 너무 다르게 움직이고 있어요!",
+        description: `연환산 추적오차가 ${te.annualized.toFixed(2)}%로 2%를 초과합니다. ETF 운용 효율을 점검하세요.`,
+        descriptionSimple: `ETF가 기준 지수를 제대로 따라가지 못하고 있어요. 다른 ETF를 비교해 보세요.`,
+        relatedIndicator: "tracking_error", value: te.annualized,
+        valueContext: "연환산 기준", icon: "⚠️",
+      }));
+    } else if (te.level === "warning") {
+      insights.push(makeInsight({
+        level: "warning", priority: 4, insightDepth: "diagnostic",
+        title: `추적오차 ${te.annualized.toFixed(2)}%, 주의 필요`,
+        titleSimple: "벤치마크와 조금 다르게 움직이고 있어요",
+        description: `연환산 추적오차가 ${te.annualized.toFixed(2)}%로 주의 구간(1~2%)에 있습니다.`,
+        descriptionSimple: `ETF가 기준 지수와 약간 차이를 보이고 있어요.`,
+        relatedIndicator: "tracking_error", value: te.annualized,
+        valueContext: "연환산 기준", icon: "🔔",
+      }));
+    } else if (te.level === "positive") {
+      insights.push(makeInsight({
+        level: "positive", priority: 7, insightDepth: "descriptive",
+        title: `추적오차 ${te.annualized.toFixed(2)}%, 벤치마크 추종 우수`,
+        titleSimple: "벤치마크를 잘 따라가고 있어요",
+        description: `연환산 추적오차가 ${te.annualized.toFixed(2)}%로 매우 낮아 추적 효율이 우수합니다.`,
+        descriptionSimple: `ETF가 기준 지수를 잘 따라가고 있어요. 좋은 ETF예요!`,
+        relatedIndicator: "tracking_error", value: te.annualized,
+        valueContext: "연환산 기준", icon: "✅",
+      }));
+    }
+  }
+
   // RSI, 크로스오버는 stockInsights 재활용
   const stockIns = stockInsights(calc, config);
   const rsiAndCross = stockIns.filter(
@@ -490,7 +623,7 @@ function buildKpiCards(
 
     const vol = summary.volatility * 100;
     cards.push({
-      indicator: "변동성",
+      indicator: "변동성 (가격 흔들림)",
       value: `${vol.toFixed(1)}%`,
       changeDirection: "neutral",
       subtitle: subtitle(findInsight("volatility")),
@@ -499,20 +632,36 @@ function buildKpiCards(
 
     const mdd = summary.mdd * 100;
     cards.push({
-      indicator: "MDD",
+      indicator: "MDD (최대 낙폭)",
       value: `${mdd.toFixed(1)}%`,
       changeDirection: "down",
       subtitle: subtitle(findInsight("mdd")),
       level: findInsight("mdd")?.level ?? "info",
     });
 
-    cards.push({
-      indicator: "샤프 비율",
-      value: summary.sharpeRatio != null ? summary.sharpeRatio.toFixed(2) : "N/A",
-      changeDirection: (summary.sharpeRatio ?? 0) > 0 ? "up" : "down",
-      subtitle: subtitle(findInsight("sharpe_ratio")),
-      level: findInsight("sharpe_ratio")?.level ?? "info",
-    });
+    // ETF_COMP: 괴리율 카드 우선, 없으면 샤프 비율
+    if (detection.dataType === "ETF_COMP" && calc.etfMetrics?.premiumDiscount) {
+      const pd = calc.etfMetrics.premiumDiscount;
+      const pdLevel = pd.level === "normal" ? "positive" as const
+        : pd.level === "info" ? "info" as const
+        : pd.level === "warning" ? "warning" as const
+        : "alert" as const;
+      cards.push({
+        indicator: "괴리율 (시장가 vs NAV)",
+        value: `${pd.current >= 0 ? "+" : ""}${pd.current.toFixed(2)}%`,
+        changeDirection: pd.current > 0 ? "up" : pd.current < 0 ? "down" : "neutral",
+        subtitle: subtitle(findInsight("premium_discount")) || pd.label,
+        level: pdLevel,
+      });
+    } else {
+      cards.push({
+        indicator: "샤프 비율 (위험 대비 수익)",
+        value: summary.sharpeRatio != null ? summary.sharpeRatio.toFixed(2) : "N/A",
+        changeDirection: (summary.sharpeRatio ?? 0) > 0 ? "up" : "down",
+        subtitle: subtitle(findInsight("sharpe_ratio")),
+        level: findInsight("sharpe_ratio")?.level ?? "info",
+      });
+    }
   } else if (detection.dataType === "PORT_ALLOC") {
     const wr = calc.indicators.find((i) => i.id === "weighted_return");
     if (wr && typeof wr.value === "number") {
@@ -535,7 +684,7 @@ function buildKpiCards(
     const hhi = calc.indicators.find((i) => i.id === "hhi");
     if (hhi && typeof hhi.value === "number") {
       cards.push({
-        indicator: "집중도 (HHI)",
+        indicator: "집중도 (분산도 HHI)",
         value: hhi.value.toFixed(2),
         changeDirection: "neutral",
         subtitle: subtitle(findInsight("hhi")),

@@ -11,6 +11,10 @@ import type {
   CrossoverEvent,
   NormalizedPrice,
   CalculationSummary,
+  EtfMetrics,
+  EtfPremiumDiscount,
+  EtfTrackingError,
+  EtfNavGauge,
 } from "@/types";
 import { MA_PERIODS } from "@/constants/defaults";
 
@@ -234,6 +238,104 @@ function detectCrossovers(
   return events;
 }
 
+/* ── ETF 전용 지표 (지표계산규칙 v2.2 §7) ──────── */
+
+function calcPremiumDiscount(
+  rows: Record<string, unknown>[],
+  detection: DetectionResult,
+  dates: string[]
+): EtfPremiumDiscount | null {
+  const priceCol =
+    detection.columns.find((c) => c.role === "ohlc" && /close|종가/i.test(c.name)) ??
+    detection.columns.find((c) => c.role === "price");
+  const navCol = detection.columns.find(
+    (c) => /^(nav|NAV|순자산가치|순자산)$/i.test(c.name)
+  );
+  if (!priceCol || !navCol) return null;
+
+  const history: { date: string; value: number }[] = [];
+  for (let i = 0; i < rows.length; i++) {
+    const price = Number(rows[i][priceCol.name]);
+    const nav = Number(rows[i][navCol.name]);
+    if (isNaN(price) || isNaN(nav) || nav === 0) continue;
+    history.push({
+      date: dates[i] ?? `row_${i}`,
+      value: ((price - nav) / nav) * 100,
+    });
+  }
+  if (history.length === 0) return null;
+
+  const current = history[history.length - 1].value;
+  const abs = Math.abs(current);
+  let level: EtfPremiumDiscount["level"];
+  let label: string;
+  if (abs <= 0.5) {
+    level = "normal"; label = "정상 범위";
+  } else if (abs <= 1.0) {
+    level = "info"; label = current > 0 ? "소폭 할증" : "소폭 할인";
+  } else if (abs <= 2.0) {
+    level = "warning"; label = current > 0 ? "할증 주의" : "할인 주의";
+  } else {
+    level = "alert"; label = current > 0 ? "과도 할증" : "과도 할인";
+  }
+
+  return { current, history, level, label };
+}
+
+function calcTrackingError(
+  rows: Record<string, unknown>[],
+  detection: DetectionResult
+): EtfTrackingError | null {
+  const priceCol =
+    detection.columns.find((c) => c.role === "ohlc" && /close|종가/i.test(c.name)) ??
+    detection.columns.find((c) => c.role === "price");
+  const benchCol = detection.columns.find(
+    (c) => /^(benchmark|index|기준지수|벤치마크)$/i.test(c.name)
+  );
+  if (!priceCol || !benchCol) return null;
+
+  const prices = rows.map((r) => Number(r[priceCol.name])).filter((v) => !isNaN(v));
+  const benchmarks = rows.map((r) => Number(r[benchCol.name])).filter((v) => !isNaN(v));
+  const len = Math.min(prices.length, benchmarks.length);
+  if (len < 10) return null;
+
+  const diffs: number[] = [];
+  for (let i = 1; i < len; i++) {
+    const etfRet = safeDiv(prices[i] - prices[i - 1], prices[i - 1]);
+    const bmRet = safeDiv(benchmarks[i] - benchmarks[i - 1], benchmarks[i - 1]);
+    diffs.push(etfRet - bmRet);
+  }
+
+  const te = std(diffs) * Math.sqrt(252);
+  let level: EtfTrackingError["level"];
+  if (te <= 0.5) level = "positive";
+  else if (te <= 1.0) level = "info";
+  else if (te <= 2.0) level = "warning";
+  else level = "alert";
+
+  return { annualized: te, level };
+}
+
+function calcNavGauge(
+  rows: Record<string, unknown>[],
+  detection: DetectionResult
+): EtfNavGauge | null {
+  const navCol = detection.columns.find(
+    (c) => /^(nav|NAV|순자산가치|순자산)$/i.test(c.name)
+  );
+  if (!navCol) return null;
+
+  const navValues = rows.map((r) => Number(r[navCol.name])).filter((v) => !isNaN(v) && v > 0);
+  if (navValues.length < 2) return null;
+
+  const current = navValues[navValues.length - 1];
+  const min = Math.min(...navValues);
+  const max = Math.max(...navValues);
+  const clamped = current <= min || current >= max;
+
+  return { value: current, min, max, clamped };
+}
+
 /* ── 메인 calculate 함수 ───────────────────────── */
 
 export function calculate(
@@ -260,6 +362,7 @@ export function calculate(
   const returns = prices.length >= 2 ? calcReturns(prices) : [];
   let crossoverEvents: CrossoverEvent[] | undefined;
   let normalizedPrices: NormalizedPrice[] | undefined;
+  let etfMetrics: EtfMetrics | undefined;
 
   const freq = detection.dateRange?.frequency ?? "daily";
   const periods = MA_PERIODS[freq as keyof typeof MA_PERIODS] ?? MA_PERIODS.daily;
@@ -409,6 +512,36 @@ export function calculate(
           };
         });
       }
+
+      // ── ETF_COMP: 괴리율 · 추적오차 · NAV 게이지 (§7) ──
+      etfMetrics = {
+        premiumDiscount: calcPremiumDiscount(rows, detection, dates),
+        trackingError: calcTrackingError(rows, detection),
+        navGauge: calcNavGauge(rows, detection),
+      };
+
+      // 괴리율 인디케이터 추가
+      if (etfMetrics.premiumDiscount) {
+        indicators.push({
+          id: "premium_discount",
+          name: "괴리율 (시장가 vs NAV)",
+          category: "required",
+          value: etfMetrics.premiumDiscount.current,
+          unit: "%",
+          metadata: { nullCount: 0 },
+        });
+      }
+      // 추적오차 인디케이터 추가
+      if (etfMetrics.trackingError) {
+        indicators.push({
+          id: "tracking_error",
+          name: "추적오차 (연환산)",
+          category: "optional",
+          value: etfMetrics.trackingError.annualized,
+          unit: "%",
+          metadata: { nullCount: 0 },
+        });
+      }
     }
   }
 
@@ -491,6 +624,7 @@ export function calculate(
     indicators,
     crossoverEvents,
     normalizedPrices,
+    etfMetrics,
     summary,
   };
 }
