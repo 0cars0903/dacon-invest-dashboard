@@ -81,13 +81,13 @@ export function FileUploader({
   );
 
   return (
-    <div className="mx-auto max-w-xl space-y-6">
+    <div className="animate-fade-in-up mx-auto max-w-xl space-y-6">
       {/* 파일 업로드 영역 */}
       <div
         onDragOver={(e) => e.preventDefault()}
         onDrop={handleDrop}
         onClick={() => inputRef.current?.click()}
-        className="cursor-pointer rounded-2xl border-2 border-dashed border-gray-300 bg-white p-8 text-center transition-all hover:border-indigo-400 hover:bg-indigo-50/30 hover:shadow-lg dark:border-gray-600 dark:bg-slate-800 dark:hover:border-indigo-500 dark:hover:bg-slate-750 sm:p-12"
+        className="group cursor-pointer rounded-2xl border-2 border-dashed border-gray-300 bg-white p-8 text-center transition-all duration-300 hover:border-indigo-400 hover:bg-indigo-50/30 hover:shadow-xl hover:shadow-indigo-500/10 dark:border-gray-600 dark:bg-slate-800/80 dark:hover:border-indigo-500 dark:hover:bg-slate-800 dark:hover:shadow-indigo-500/5 sm:p-12"
       >
         <input
           ref={inputRef}
@@ -109,7 +109,7 @@ export function FileUploader({
           </div>
         ) : (
           <div className="space-y-3">
-            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-indigo-100 dark:bg-indigo-900">
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-100 to-violet-100 transition-transform duration-300 group-hover:scale-110 dark:from-indigo-900/60 dark:to-violet-900/60">
               <svg
                 className="h-7 w-7 text-indigo-600 dark:text-indigo-400"
                 fill="none"
@@ -138,22 +138,26 @@ export function FileUploader({
 
       {/* 샘플 데이터 원클릭 로드 */}
       {!isAnalyzing && (
-        <div>
+        <div className="animate-fade-in-up delay-200">
           <p className="mb-3 text-center text-xs font-medium text-gray-400 dark:text-gray-500">
             또는 샘플 데이터로 바로 체험하기
           </p>
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-            {SAMPLE_DATA_OPTIONS.map((opt) => (
+          <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-3">
+            {SAMPLE_DATA_OPTIONS.map((opt, idx) => (
               <button
                 key={opt.id}
                 onClick={(e) => {
                   e.stopPropagation();
                   handleSampleClick(opt.csv);
                 }}
-                className="group rounded-xl border border-gray-200 bg-white px-3 py-3 text-left transition-all hover:border-indigo-300 hover:shadow-md dark:border-gray-600 dark:bg-slate-800 dark:hover:border-indigo-500"
+                className={`group relative overflow-hidden rounded-xl border border-gray-200 bg-white px-3 py-3 text-left transition-all duration-200 hover:-translate-y-0.5 hover:border-indigo-300 hover:shadow-lg hover:shadow-indigo-500/10 dark:border-gray-700 dark:bg-slate-800/80 dark:hover:border-indigo-500 dark:hover:shadow-indigo-500/5 ${
+                  idx >= 3 ? "col-span-1" : ""
+                }`}
               >
+                {/* 호버 시 상단 그라디언트 악센트 */}
+                <div className="absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r from-indigo-500 to-violet-500 opacity-0 transition-opacity duration-200 group-hover:opacity-100" />
                 <div className="text-xl">{opt.icon}</div>
-                <p className="mt-1 text-sm font-medium text-gray-800 group-hover:text-indigo-700 dark:text-gray-200 dark:group-hover:text-indigo-400">
+                <p className="mt-1 text-sm font-medium text-gray-800 transition-colors group-hover:text-indigo-700 dark:text-gray-200 dark:group-hover:text-indigo-400">
                   {opt.label}
                 </p>
                 <p className="mt-0.5 text-[11px] leading-tight text-gray-400 dark:text-gray-500">

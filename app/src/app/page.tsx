@@ -52,11 +52,11 @@ export default function HomePage() {
   );
 
   return (
-    <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
+    <main className="hero-gradient mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
       {/* 헤더 */}
-      <header className="mb-6 text-center sm:mb-8">
-        <div className="inline-flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-600 text-white text-sm font-bold">
+      <header className="animate-fade-in-up mb-6 text-center sm:mb-8">
+        <div className="inline-flex items-center gap-3">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 text-white text-sm font-bold shadow-lg shadow-indigo-500/25">
             IL
           </div>
           <h1 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-3xl">
@@ -132,10 +132,13 @@ export default function HomePage() {
       )}
 
       {/* 푸터 */}
-      <footer className="mt-12 border-t border-gray-100 pt-6 text-center dark:border-gray-700">
-        <p className="text-xs text-gray-400 dark:text-gray-500">
-          InvestLens · Skills.md 기반 투자 데이터 자동 분석 대시보드 · DACON 해커톤 2026
-        </p>
+      <footer className="mt-12 border-t border-gray-100 pt-6 text-center dark:border-gray-800">
+        <div className="flex items-center justify-center gap-2 text-xs text-gray-400 dark:text-gray-500">
+          <div className="flex h-5 w-5 items-center justify-center rounded bg-gradient-to-br from-indigo-500 to-violet-600 text-[8px] font-bold text-white">
+            IL
+          </div>
+          <span>InvestLens · Skills.md 기반 투자 데이터 자동 분석 대시보드 · DACON 해커톤 2026</span>
+        </div>
       </footer>
     </main>
   );
